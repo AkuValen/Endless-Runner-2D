@@ -1,9 +1,14 @@
-class Obstacle {
-  constructor(game) {
+export class Obstacle {
+  constructor(game, pivotX) {
     this.game = game;
 
-    this.lanePos;
+    this.pivotX = pivotX;
+    this.pivotY = 0;
+
+    this.speed = 2;
   }
 
-  isColliding() {}
+  move() {
+    this.pivotY += this.speed;
+  }
 }

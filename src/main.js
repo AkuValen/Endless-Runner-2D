@@ -4,6 +4,8 @@ import { InputHandler } from "./core/input.js";
 import { Lane } from "./world/lane.js";
 import { Player } from "./entities/player.js";
 
+import { updateObstacle, renderObstacle } from "./core/obstacleManager.js";
+
 class Game {
   constructor() {
     this.canvas = document.getElementById("game-canvas");
@@ -12,7 +14,10 @@ class Game {
     this.config = configGameData();
     this.input = new InputHandler();
 
-    this.time = 0;
+    this.time = {
+      second: 0,
+      tick: false,
+    };
     this.timeAccumulator = 0;
     this.lastTime = 0;
 
@@ -20,7 +25,7 @@ class Game {
     this.lanes = [];
 
     this.player;
-    this.activeObstacle;
+    this.activeObstacle = [];
 
     this.start();
   }
@@ -33,10 +38,14 @@ class Game {
 
     if (this.timeAccumulator >= 1000) {
       this.timeAccumulator -= 1000;
-      this.time++;
 
-      console.log(this.time);
+      this.time.second++;
+      this.time.tick = true;
+    } else {
+      this.time.tick = false;
     }
+
+    this.lastTime = timestamp;
   }
 
   render() {
@@ -48,6 +57,8 @@ class Game {
     this.lanes.forEach((lane, index) => {
       lane.drawLane(index);
     });
+
+    renderObstacle(this, this.ctx);
 
     this.ctx.save();
     this.ctx.translate(this.player.pivotX, this.player.pivotY);
@@ -61,6 +72,7 @@ class Game {
 
   update() {
     this.player.update();
+    updateObstacle(this);
   }
 
   loop(timestamp) {
@@ -69,7 +81,6 @@ class Game {
     this.update();
     this.render();
 
-    this.lastTime = timestamp;
     requestAnimationFrame((timestamp) => this.loop(timestamp));
   }
 

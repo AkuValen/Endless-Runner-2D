@@ -9,7 +9,7 @@ function preloadImages() {
       preloadEntities[img].src = "../../assets/img/" + img + ".png";
     });
   } catch (error) {
-    console.error(`Gagal mengunduh data towers.json pada assets.js`);
+    console.error(`Gagal mengunduh img entity pada assets.js`);
   }
 }
 
