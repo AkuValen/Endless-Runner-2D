@@ -1,0 +1,19 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  background-color: rgb(179, 167, 152);
+}
+
+canvas {
+  border-left: 2px solid black;
+  border-right: 2px solid black;
+  box-sizing: border-box;
+  box-shadow: 0 0px 15px rgba(0, 0, 0, 1);
+
+  /* height: 100vh; */
+}
