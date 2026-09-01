@@ -1,3 +1,3 @@
 # ⚠️ Proyek Masih Dalam Pengembangan (Work In Progress)
 
-Repo proyek ini masih pada tahap pengembangan jadi proyek game ini masih belum dimainkan.
+Game telah dapat dimainkan namun masih dalam tahap pengembangan.
