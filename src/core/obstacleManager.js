@@ -7,11 +7,28 @@ export function renderObstacle(game, ctx) {
     ctx.translate(obstacle.pivotX, obstacle.pivotY);
 
     const obstacleImg = preloadEntities.obstacle;
-    const obstacleSize = 85;
+    const obstacleSize = obstacle.size;
 
     ctx.drawImage(obstacleImg, -obstacleSize / 2, -obstacleSize / 2, obstacleSize, obstacleSize);
     ctx.restore();
   });
+}
+
+function spawnObstacle(game) {
+  const randIndex = Math.floor(Math.random() * game.lanes.length);
+  const isObstacle = Math.random() < 0.5;
+
+  if (isObstacle) {
+    const lanePivotX = game.lanes[randIndex].pivotX;
+
+    game.activeObstacle.push(new Obstacle(game, lanePivotX));
+  } else {
+    const lanes = game.lanes.filter((lane, index) => index != randIndex);
+
+    lanes.forEach((lane) => {
+      game.activeObstacle.push(new Obstacle(game, lane.pivotX));
+    });
+  }
 }
 
 const spawnInterval = 5;
@@ -28,31 +45,12 @@ export function updateObstacle(game) {
     }
   }
 
-  let activeObstacle = game.activeObstacle;
-
-  activeObstacle.forEach((obstacle) => {
+  game.activeObstacle.forEach((obstacle) => {
+    obstacle.setHitbox();
     obstacle.move();
   });
 
-  activeObstacle = activeObstacle.filter((obstacle) => {
+  game.activeObstacle = game.activeObstacle.filter((obstacle) => {
     return obstacle.pivotY <= game.canvas.height;
   });
-}
-
-function spawnObstacle(game) {
-  const randIndex = Math.floor(Math.random() * 2);
-
-  const isObstacle = Math.random() < 0.5;
-
-  if (isObstacle) {
-    const lanePivotX = game.lanes[randIndex].pivotX;
-
-    game.activeObstacle.push(new Obstacle(game, lanePivotX));
-  } else {
-    const lanes = game.lanes.filter((lane, index) => index != randIndex);
-
-    lanes.forEach((lane) => {
-      game.activeObstacle.push(new Obstacle(game, lane.pivotX));
-    });
-  }
 }

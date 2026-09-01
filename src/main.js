@@ -1,5 +1,6 @@
-import { configGameData, preloadEntities } from "./core/assets.js";
+import { configGameData } from "./core/assets.js";
 import { InputHandler } from "./core/input.js";
+import { generateCanvas, renderCanvas } from "./core/display.js";
 
 import { Lane } from "./world/lane.js";
 import { Player } from "./entities/player.js";
@@ -9,10 +10,10 @@ import { updateObstacle, renderObstacle } from "./core/obstacleManager.js";
 class Game {
   constructor() {
     this.canvas = document.getElementById("game-canvas");
-    this.ctx = this.canvas.getContext("2d");
 
-    this.config = configGameData();
-    this.input = new InputHandler();
+    this.input = new InputHandler(this);
+    this.loopId;
+    this.isEnd = false;
 
     this.time = {
       second: 0,
@@ -30,10 +31,20 @@ class Game {
     this.start();
   }
 
+  endGame() {
+    if (this.loopId) {
+      cancelAnimationFrame(this.loopId);
+
+      this.loopId = null;
+      this.isEnd = true;
+    }
+  }
+
   timeCounter(timestamp) {
     if (this.lastTime <= 0) this.lastTime = timestamp;
 
     let deltaTime = timestamp - this.lastTime;
+
     this.timeAccumulator += deltaTime;
 
     if (this.timeAccumulator >= 1000) {
@@ -48,58 +59,75 @@ class Game {
     this.lastTime = timestamp;
   }
 
-  render() {
-    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+  resume() {
+    if (this.loopId) {
+      cancelAnimationFrame(this.loopId);
+    }
 
-    this.ctx.fillStyle = "#49542a";
-    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    this.loopId = requestAnimationFrame((timestamp) => {
+      this.lastTime = timestamp;
+      return this.loop(timestamp);
+    });
+  }
+
+  render() {
+    const ctx = this.canvas.getContext("2d");
+    ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+    renderCanvas(this.canvas, ctx);
 
     this.lanes.forEach((lane, index) => {
-      lane.drawLane(index);
+      lane.drawLane(ctx, index);
     });
 
-    renderObstacle(this, this.ctx);
+    renderObstacle(this, ctx);
 
-    this.ctx.save();
-    this.ctx.translate(this.player.pivotX, this.player.pivotY);
-
-    const playerImg = preloadEntities.player;
-    const playerSize = 85;
-
-    this.ctx.drawImage(playerImg, -playerSize / 2, -playerSize / 2, playerSize, playerSize);
-    this.ctx.restore();
+    if (this.player) {
+      this.player.render(ctx);
+    }
   }
 
   update() {
+    if (this.player.isCollided) {
+      this.player = null;
+
+      this.endGame();
+      return;
+    }
+
     this.player.update();
     updateObstacle(this);
   }
 
   loop(timestamp) {
+    if (this.isEnd) {
+      return;
+    }
+
     this.timeCounter(timestamp);
 
     this.update();
     this.render();
 
-    requestAnimationFrame((timestamp) => this.loop(timestamp));
+    if (!this.input.isFocus) {
+      cancelAnimationFrame(this.loopId);
+    } else {
+      this.loopId = requestAnimationFrame((timestamp) => this.loop(timestamp));
+    }
   }
 
   start() {
-    const pos = ["left", "middle", "right"];
-
-    pos.forEach((pos, index) => {
-      this.lanes.push(new Lane(this, pos, index));
-    });
-
-    this.canvas.height = window.innerHeight;
-    this.canvas.width = this.lanes.length * this.laneData.width;
+    this.laneData.generateLane(this);
+    generateCanvas(this);
 
     this.player = new Player(this);
 
-    requestAnimationFrame((timestamp) => this.loop(timestamp));
+    this.loopId = requestAnimationFrame((timestamp) => this.loop(timestamp));
   }
 }
 
 window.addEventListener("load", () => {
-  new Game();
+  configGameData().then(() => {
+    new Game();
+  });
 });

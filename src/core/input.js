@@ -1,8 +1,13 @@
 export class InputHandler {
-  constructor() {
+  constructor(game) {
+    this.game = game;
+
     this.keys = [];
 
+    this.isFocus = true;
+
     this.#keyInput();
+    this.#windowInput();
   }
 
   #keyInput() {
@@ -22,6 +27,21 @@ export class InputHandler {
       if (index > -1) {
         const key = this.keys.splice(index, 1);
       }
+    });
+  }
+
+  #windowInput() {
+    window.addEventListener("blur", () => {
+      console.log("Blur");
+
+      this.isFocus = false;
+    });
+
+    window.addEventListener("focus", () => {
+      console.log("Focus");
+
+      this.isFocus = true;
+      this.game.resume();
     });
   }
 }
