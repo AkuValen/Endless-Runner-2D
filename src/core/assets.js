@@ -7,7 +7,7 @@ function preloadImages(resolve) {
 
     image.forEach((img) => {
       preloadEntities[img] = new Image();
-      preloadEntities[img].src = "../../assets/img/" + img + ".png";
+      preloadEntities[img].src = "./assets/img/" + img + ".png";
 
       preloadEntities[img].onload = () => {
         imgCounter++;
