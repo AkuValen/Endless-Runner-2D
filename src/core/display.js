@@ -7,3 +7,11 @@ export function renderCanvas(canvas, ctx) {
   ctx.fillStyle = "#49542a";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 }
+
+export function printScore(game) {
+  const userScore = document.getElementById("user-score");
+
+  if (userScore) {
+    userScore.textContent = game.time.second;
+  }
+}

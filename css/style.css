@@ -7,6 +7,7 @@ body {
   display: flex;
   justify-content: center;
   background-color: rgb(179, 167, 152);
+  position: relative;
 }
 
 canvas {
@@ -15,5 +16,27 @@ canvas {
   box-sizing: border-box;
   box-shadow: 0 0px 15px rgba(0, 0, 0, 1);
 
-  /* height: 100vh; */
+  max-height: 100vh;
+  min-height: 100vh;
+}
+
+.score-box {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  padding: 10px;
+  background-color: rgb(163, 196, 225);
+
+  top: 0;
+  left: 0;
+  height: 150px;
+  width: 150px;
+  margin-top: 50px;
+  margin-left: 50px;
+  border: 2px solid black;
+  border-radius: 20px;
+}
+.score-box {
 }

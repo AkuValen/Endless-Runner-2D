@@ -1,5 +1,5 @@
 export class Obstacle {
-  constructor(game, pivotX) {
+  constructor(game, pivotX, speed) {
     this.game = game;
 
     this.pivotX = pivotX;
@@ -8,9 +8,12 @@ export class Obstacle {
 
     this.hitbox;
 
-    this.speed = 2;
+    this.speed = speed;
 
     this.setHitbox();
+  }
+  increaseSpeed() {
+    this.speed = this.speed + 4;
   }
 
   setHitbox() {

@@ -1,6 +1,6 @@
 import { configGameData } from "./core/assets.js";
 import { InputHandler } from "./core/input.js";
-import { generateCanvas, renderCanvas } from "./core/display.js";
+import { generateCanvas, renderCanvas, printScore } from "./core/display.js";
 
 import { Lane } from "./world/lane.js";
 import { Player } from "./entities/player.js";
@@ -71,6 +71,8 @@ class Game {
   }
 
   render() {
+    printScore(this);
+
     const ctx = this.canvas.getContext("2d");
     ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 

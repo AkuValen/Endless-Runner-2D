@@ -14,6 +14,18 @@ export function renderObstacle(game, ctx) {
   });
 }
 
+let obstacleSpeed = 2;
+let spawnInterval = 5;
+
+function increaseDifficulty(game) {
+  if (game.time.second % 10 == 0) {
+    obstacleSpeed += 0.2;
+  }
+  if (game.time.second % 50 == 0) {
+    if (spawnInterval >= 2) spawnInterval -= 1;
+  }
+}
+
 function spawnObstacle(game) {
   const randIndex = Math.floor(Math.random() * game.lanes.length);
   const isObstacle = Math.random() < 0.5;
@@ -21,17 +33,16 @@ function spawnObstacle(game) {
   if (isObstacle) {
     const lanePivotX = game.lanes[randIndex].pivotX;
 
-    game.activeObstacle.push(new Obstacle(game, lanePivotX));
+    game.activeObstacle.push(new Obstacle(game, lanePivotX, obstacleSpeed));
   } else {
     const lanes = game.lanes.filter((lane, index) => index != randIndex);
 
     lanes.forEach((lane) => {
-      game.activeObstacle.push(new Obstacle(game, lane.pivotX));
+      game.activeObstacle.push(new Obstacle(game, lane.pivotX, obstacleSpeed));
     });
   }
 }
 
-const spawnInterval = 5;
 let cooldown = 3;
 
 export function updateObstacle(game) {
@@ -43,6 +54,8 @@ export function updateObstacle(game) {
       spawnObstacle(game);
       cooldown += spawnInterval;
     }
+
+    increaseDifficulty(game);
   }
 
   game.activeObstacle.forEach((obstacle) => {
