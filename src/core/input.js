@@ -3,10 +3,12 @@ export class InputHandler {
     this.game = game;
 
     this.keys = [];
-    this.touch = {};
+    this.touch = {
+      isTouch: false,
+      dragDirection: null,
+    };
 
     this.isFocus = true;
-    this.isDrag = false;
 
     this.#keyInput();
     this.#touchInput();
@@ -38,43 +40,43 @@ export class InputHandler {
     window.addEventListener(
       "touchstart",
       (e) => {
+        // e.preventDefault();
+
+        this.touch.isTouch = true;
         this.touch.startX = e.touches[0].clientX;
-        // this.touch.startY = e.touches[0].clientY;
-
-        this.isDrag = true;
-
-        console.log("touch: ", this.touch);
       },
-      { passive: false },
+      //{ passive: false },
     );
 
     window.addEventListener(
       "touchmove",
       (e) => {
-        e.preventDefault();
-
-        if (!this.isDrag) return;
+        // e.preventDefault();
+        if (!this.touch.isTouch) return;
 
         let currentX = e.touches[0].clientX;
 
-        this.touch.currentX = currentX;
+        const directionX = Math.sign(currentX - this.touch.startX);
 
-        const directionX = Math.sign(this.touch.startX - currentX);
+        if (directionX > 0) {
+          this.touch.dragDirection = "right";
 
-        if (directionX < 0) {
           console.log("Kanan");
         }
-        if (directionX > 0) {
+        if (directionX < 0) {
+          this.touch.dragDirection = "left";
+
           console.log("Kiri");
         }
 
         this.touch.startX = currentX;
       },
-      { passive: false },
+      // { passive: false },
     );
 
     window.addEventListener("touchend", () => {
-      this.isDrag = false;
+      this.touch.isTouch = false;
+      this.touch.dragDirection = null;
 
       console.log("touch end");
     });

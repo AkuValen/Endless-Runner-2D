@@ -18,23 +18,38 @@ export class Player {
     this.generatePlayer();
   }
 
-  switchLane() {
-    const recentKey = this.game.input.keys[this.game.input.keys.length - 1];
+  switchLane(gameInput) {
+    const currentLaneIndex = this.game.lanes.findIndex((lane) => lane.pos === this.lane.pos);
+    let switchDirection;
 
-    const switchLeft = ["a", "arrowleft"];
-    const switchRight = ["d", "arrowright"];
+    console.log("Switching");
 
-    if (switchLeft.includes(recentKey)) {
+    if (gameInput.touch.isTouch) {
+      switchDirection = gameInput.touch.dragDirection;
+    }
+
+    if (this.game.input.keys.length > 0) {
+      const switchLeft = ["a", "arrowleft"];
+      const switchRight = ["d", "arrowright"];
+      const recentKey = this.game.input.keys[this.game.input.keys.length - 1];
+
+      if (switchLeft.includes(recentKey)) {
+        console.log("Ke kiri");
+        switchDirection = "left";
+      }
+      if (switchRight.includes(recentKey)) {
+        console.log("Ke kanan");
+        switchDirection = "right";
+      }
+    }
+
+    if (switchDirection === "left") {
       if (this.lane.pos === "left") return;
-
-      const currentLaneIndex = this.game.lanes.findIndex((lane) => lane.pos === this.lane.pos);
 
       this.lane = this.game.lanes[currentLaneIndex - 1];
     }
-    if (switchRight.includes(recentKey)) {
+    if (switchDirection === "right") {
       if (this.lane.pos === "right") return;
-
-      const currentLaneIndex = this.game.lanes.findIndex((lane) => lane.pos === this.lane.pos);
 
       this.lane = this.game.lanes[currentLaneIndex + 1];
     }
@@ -89,7 +104,9 @@ export class Player {
       return;
     }
 
-    if (this.game.input.keys.length <= 0) {
+    const gameInput = this.game.input;
+
+    if (gameInput.keys.length <= 0 && !gameInput.touch.dragDirection) {
       this.isSwitchedLane = false;
       return;
     }
@@ -97,7 +114,7 @@ export class Player {
       return;
     }
 
-    this.switchLane();
+    this.switchLane(gameInput);
   }
 
   generatePlayer() {

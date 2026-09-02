@@ -7,7 +7,7 @@ body {
   display: flex;
   justify-content: center;
   background-color: rgb(179, 167, 152);
-  position: relative;
+  /* position: relative; */
 }
 
 canvas {
@@ -25,18 +25,18 @@ canvas {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  position: absolute;
+  position: fixed;
   padding: 10px;
   background-color: rgb(163, 196, 225);
 
-  top: 0;
-  left: 0;
-  height: 150px;
-  width: 150px;
-  margin-top: 50px;
-  margin-left: 50px;
+  top: 50px;
+  left: 50px;
+  height: 100px;
+  width: 100px;
+
   border: 2px solid black;
   border-radius: 20px;
 }
-.score-box {
+.score-box h1 {
+  font-size: 28px;
 }

@@ -106,6 +106,8 @@ class Game {
       return;
     }
 
+    // console.log(this.input.touch);
+
     this.timeCounter(timestamp);
 
     this.update();
